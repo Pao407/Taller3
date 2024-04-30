@@ -8,5 +8,6 @@ data class User (
     var latitud: String = "",
     var longitud: String = "",
     var uid: String = "",
-    var id: String = ""
+    var id: String = "",
+    var image: String = ""
 );

@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileOutputStream
+import java.util.UUID
 
 class RegistrarActivity : AppCompatActivity() {
 
@@ -36,11 +38,15 @@ class RegistrarActivity : AppCompatActivity() {
     private lateinit var storage: FirebaseStorage
     private lateinit var ivImage: ImageView
     private lateinit var preferences: SharedPreferences
+    private var imageUri: Uri? = null
     private val pickMedia = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         ivImage.setImageURI(uri)
+        imageUri = uri
     }
     private val database = FirebaseDatabase.getInstance()
     private lateinit var myRef: DatabaseReference
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registrar)
@@ -49,8 +55,9 @@ class RegistrarActivity : AppCompatActivity() {
         db = FirebaseDatabase.getInstance()
         storage = FirebaseStorage.getInstance()
 
-        val seleccionarImagenButton = findViewById<Button>(R.id.buttonImgenPerfil)
-        seleccionarImagenButton.setOnClickListener {
+        // Inicializa el ImageView
+        ivImage = findViewById(R.id.imageView)
+        ivImage.setOnClickListener {
             showMediaOptions()
         }
 
@@ -70,6 +77,7 @@ class RegistrarActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor, verifica los datos ingresados", Toast.LENGTH_SHORT).show()
             }
         }
+        myRef = database.getReference(PATH_USERS)
 
     }
     fun registrar(nombre: String, apellido: String,email: String,password: String, identificacion: String, latitud: String, longitud: String) {
@@ -78,29 +86,43 @@ class RegistrarActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    uploadImageAndSaveUser(user?.uid, nombre, apellido, identificacion, latitud, longitud)
+                    if (imageUri != null) {
+                        uploadImageAndSaveUser(user?.uid, nombre, apellido, identificacion, latitud, longitud, imageUri!!)
+                        finish()
+                    } else {
+                        Toast.makeText(baseContext, "Por favor, selecciona una imagen.", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(baseContext, "Authenticacion fallo.",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, "Authenticacion fallo.", Toast.LENGTH_SHORT).show()
                 }
             }
     }
+    private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri) {
+        val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    val user = com.example.taller_3_olarte_benitez_rodriguez.model.User()
+                    user.uid = uid.toString()
+                    user.name = nombre
+                    user.apellido = apellido
+                    user.id = identificacion
+                    user.latitud = latitud
+                    user.longitud = longitud
+                    user.image = downloadUri.toString()
 
-    private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String) {
-
-        val user= com.example.taller_3_olarte_benitez_rodriguez.model.User()
-        user.uid=uid.toString()
-        user.name=nombre
-        user.apellido=apellido
-        user.id=identificacion
-        user.latitud=latitud
-        user.longitud=longitud
-
-        val key = myRef.push().key
-        myRef = database.getReference(PATH_USERS + key)
-        myRef.setValue(user)
-
+                    val key = myRef.push().key
+                    if (key != null) {
+                        myRef.child(key).setValue(user)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al subir la imagen.", Toast.LENGTH_SHORT).show()
+            }
     }
+
+
 
 
     //funcion para seleccionar imagen de la galeria o tomar una foto
