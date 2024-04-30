@@ -24,6 +24,7 @@ import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileOutputStream

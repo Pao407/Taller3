@@ -45,11 +45,16 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
     implementation(libs.firebase.firestore.ktx)
-    implementation("com.github.MKergall:osmbonuspack:6.9.0")
+
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation(platform(libs.firebase.bom))
+
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("org.osmdroid:osmdroid-android:6.1.14")
+    implementation(libs.osmdroid.android)
+    implementation(libs.osmbonuspack)
 }
