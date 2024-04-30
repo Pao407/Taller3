@@ -15,9 +15,32 @@
         tools:layout_editor_absoluteX="147dp"
         tools:layout_editor_absoluteY="96dp"
         android:gravity="center"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:textStyle="bold"
-        android:layout_marginTop="50dp"
+
+        />
+
+    <Button
+        android:id="@+id/buttonImgenPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/seleccionar_imagen"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imageView"
+        />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="131dp"
+        android:layout_height="107dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.327"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textViewRegistrase"
         />
 
     <TextView
@@ -25,10 +48,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ingrese_su_nombre"
-        android:layout_below="@id/textViewRegistrase"
-        android:layout_marginTop="30dp"
+        android:layout_below="@id/buttonImgenPerfil"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
-        android:textSize="20dp"
+        android:textSize="16sp"
         />
 
     <EditText
@@ -49,9 +72,8 @@
         android:layout_height="wrap_content"
         android:text="@string/ingrese_su_apellido"
         android:layout_below="@id/editTextNombre"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:textSize="20dp"
+        android:textSize="16sp"
         />
 
     <EditText
@@ -72,9 +94,8 @@
         android:layout_height="wrap_content"
         android:text="@string/ingrese_su_correo"
         android:layout_below="@id/editTextApellido"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:textSize="20dp"
+        android:textSize="16sp"
         />
 
     <EditText
@@ -95,9 +116,8 @@
         android:layout_height="wrap_content"
         android:text="@string/ingrese_contrase_a"
         android:layout_below="@id/editTextTextEmailAddress2"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:textSize="20dp"
+        android:textSize="16sp"
         />
 
     <EditText
@@ -111,5 +131,81 @@
         android:layout_below="@id/textViewContrasena"
         android:hint="@string/contrase_a"
         />
+
+    <TextView
+        android:id="@+id/textViewIdentificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ingrese_numero_de_identificacion"
+        android:layout_below="@id/editTextTextPassword2"
+        android:layout_marginLeft="20dp"
+        android:textSize="16sp"
+        />
+
+    <EditText
+        android:id="@+id/editTextNumberIdentificacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:layout_below="@id/textViewIdentificacion"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="@string/identificacion"
+        />
+
+    <TextView
+        android:id="@+id/textViewLatitud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ingrese_su_latitud"
+        android:layout_below="@id/editTextNumberIdentificacion"
+        android:layout_marginLeft="20dp"
+        android:textSize="16sp"
+        />
+
+    <EditText
+        android:id="@+id/editTextNumberDecimalLatitud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/textViewLatitud"
+        android:hint="@string/latitud"
+        />
+
+    <TextView
+        android:id="@+id/textViewLongitud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingrese su longitud:"
+        android:layout_below="@id/editTextNumberDecimalLatitud"
+        android:layout_marginLeft="20dp"
+        android:textSize="16sp"
+        />
+
+    <EditText
+        android:id="@+id/editTextNumberDecimalLongitud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/textViewLongitud"
+        android:hint="@string/longitud"
+        />
+
+    <Button
+        android:id="@+id/buttonRegistrarse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/registrarce"
+        android:gravity="center"
+        android:layout_below="@id/editTextNumberDecimalLongitud"
+        android:layout_centerHorizontal="true"
+        />
+
+
 
 </RelativeLayout>

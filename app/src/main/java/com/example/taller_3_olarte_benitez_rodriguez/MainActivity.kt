@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         iniciar()
+
+        val buttonRegistrarse = findViewById<Button>(R.id.buttonRegistrarse)
+        buttonRegistrarse.setOnClickListener {
+            val intent = Intent(this, RegistrarActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun isEmailValid(email: String): Boolean {
