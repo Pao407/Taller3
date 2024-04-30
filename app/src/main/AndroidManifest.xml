@@ -18,7 +18,7 @@
             android:name=".activities.RegistrarActivity"
             android:exported="false" />
         <activity
-            android:name=".Iniciar"
+            android:name=".activities.IniciarActivity"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
