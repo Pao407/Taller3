@@ -1,9 +1,11 @@
-package com.example.taller_3_olarte_benitez_rodriguez
+package com.example.taller_3_olarte_benitez_rodriguez.activities
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.taller_3_olarte_benitez_rodriguez.R
+import com.example.taller_3_olarte_benitez_rodriguez.model.Ubicaciones
 import com.google.gson.Gson
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -14,8 +16,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.IOException
 import java.nio.charset.Charset
 
-class Iniciar : AppCompatActivity() {
-
+class IniciarActivity : AppCompatActivity() {
     private lateinit var puntosDeInteres: List<GeoPoint>
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
@@ -104,14 +105,3 @@ class Iniciar : AppCompatActivity() {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
     }
 }
-
-data class Ubicacion(
-    val latitude: Double,
-    val longitude: Double,
-    val name: String
-)
-
-data class Ubicaciones(
-    val locations: Map<String, Ubicacion>,
-    val locationsArray: List<Ubicacion>
-)

@@ -1,4 +1,4 @@
-package com.example.taller_3_olarte_benitez_rodriguez
+package com.example.taller_3_olarte_benitez_rodriguez.activities
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                                 // si la autenticacion es exitosa, pasar a la siguiente actividad
                                 Log.d(TAG, "signInWithEmail:success")
                                 val user = auth.currentUser
-                                val intent = Intent(this, Iniciar::class.java)
+                                val intent = Intent(this, IniciarActivity::class.java)
                                 startActivity(intent)
                             } else {
                                 // si falla la autenticacion, mostrar un mensaje al usuario

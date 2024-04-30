@@ -1,4 +1,4 @@
-package com.example.taller_3_olarte_benitez_rodriguez
+package com.example.taller_3_olarte_benitez_rodriguez.activities
 
 import android.Manifest
 import android.app.Activity
@@ -8,7 +8,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -17,17 +16,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileOutputStream
@@ -91,7 +87,7 @@ class RegistrarActivity : AppCompatActivity() {
 
     private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String) {
 
-        val user=User()
+        val user= com.example.taller_3_olarte_benitez_rodriguez.model.User()
         user.uid=uid.toString()
         user.name=nombre
         user.apellido=apellido
@@ -133,7 +129,8 @@ class RegistrarActivity : AppCompatActivity() {
     private fun requestCameraPermission() {
         ActivityCompat.requestPermissions(this,
             arrayOf(Manifest.permission.CAMERA),
-            CAMERA_PERMISSION_CODE)
+            CAMERA_PERMISSION_CODE
+        )
     }
 //funcion para abrir la camara
     private fun openCamera() {
