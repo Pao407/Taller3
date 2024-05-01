@@ -1,10 +1,15 @@
-package com.example.taller_3_olarte_benitez_rodriguez.activities
+package com.example.taller_3_olarte_benitez_rodriguez.fragments
+
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.taller_3_olarte_benitez_rodriguez.R
+import com.example.taller_3_olarte_benitez_rodriguez.databinding.FragmentInteresBinding
 import com.example.taller_3_olarte_benitez_rodriguez.model.Ubicaciones
 import com.google.gson.Gson
 import org.osmdroid.api.IMapController
@@ -16,15 +21,23 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.IOException
 import java.nio.charset.Charset
 
-class IniciarActivity : AppCompatActivity() {
+class InteresFragment : Fragment() {
+    private lateinit var _binding: FragmentInteresBinding
     private lateinit var puntosDeInteres: List<GeoPoint>
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_iniciar)
-        osmMap = findViewById(R.id.osmMap)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment with binding
+        _binding = FragmentInteresBinding.inflate(inflater, container, false)
+        return _binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        osmMap = _binding.osmMap
         Configuration.getInstance().userAgentValue = "com.example.taller_3_olarte_benitez_rodriguez"
 
         cargarPuntosDeInteresDesdeJSON()
@@ -35,7 +48,7 @@ class IniciarActivity : AppCompatActivity() {
     private fun cargarPuntosDeInteresDesdeJSON() {
         val json: String = try {
             // Lee el archivo JSON desde la carpeta "assets"
-            val inputStream = assets.open("locations.json")
+            val inputStream = requireActivity().assets.open("locations.json")
             val size = inputStream.available()
             val buffer = ByteArray(size)
             inputStream.read(buffer)
@@ -76,10 +89,10 @@ class IniciarActivity : AppCompatActivity() {
         mLocationOverlay = MyLocationNewOverlay(osmMap)
         osmMap.overlays.add(mLocationOverlay)
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         } else {

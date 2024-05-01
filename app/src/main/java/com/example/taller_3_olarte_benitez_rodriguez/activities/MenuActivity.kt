@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.example.taller_3_olarte_benitez_rodriguez.databinding.ActivityMenuBinding
+import com.example.taller_3_olarte_benitez_rodriguez.fragments.InteresFragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -25,7 +26,7 @@ class MenuActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpFragment()
-        //openFragment(HomeFragment())
+        openFragment(InteresFragment())
     }
 
     private fun setUpFragment() {
@@ -39,8 +40,8 @@ class MenuActivity : AppCompatActivity() {
     private fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                //val homeFragment = HomeFragment()
-                //fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, homeFragment).commit()
+                val interesFragment = InteresFragment()
+                openFragment(interesFragment)
                 return true
             }
             R.id.nav_disponibilidad -> {
