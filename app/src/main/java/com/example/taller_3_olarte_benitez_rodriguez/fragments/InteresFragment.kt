@@ -17,6 +17,10 @@ import androidx.core.content.ContextCompat
 import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.example.taller_3_olarte_benitez_rodriguez.databinding.FragmentInteresBinding
 import com.example.taller_3_olarte_benitez_rodriguez.model.Ubicaciones
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -34,6 +38,10 @@ class InteresFragment : Fragment() {
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
     private var marker: Marker? = null
+
+    // Variables para Google Play Services
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,6 +128,7 @@ class InteresFragment : Fragment() {
                 override fun onLocationChanged(location: Location) {
                     val myLocation = GeoPoint(location)
                     Toast.makeText(requireContext(), "Location changed: $myLocation", Toast.LENGTH_SHORT).show()
+                    actualizarUbicacionEnBaseDeDatos(myLocation) // Actualiza la ubicación en la base de datos
                 }
 
                 override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
@@ -137,11 +146,34 @@ class InteresFragment : Fragment() {
             }
 
             mlocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 10f, mlocationListener)
+
+            mlocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 10f, mlocationListener)
         }
     }
 
     private fun agregarMarcadorUbicacionActual(ubicacion: GeoPoint) {
         Log.i("map", "Se actuaizo")
+    }
+
+    private fun actualizarUbicacionEnBaseDeDatos(ubicacion: GeoPoint) {
+        val auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid // Obtiene el ID del usuario que inició sesión
+
+        if (userId != null) {
+            val database = FirebaseDatabase.getInstance()
+            val myRef = database.getReference("users/$userId/location")
+
+            val locationMap = mapOf("latitude" to ubicacion.latitude, "longitude" to ubicacion.longitude)
+            myRef.setValue(locationMap)
+                .addOnSuccessListener {
+                    Log.d("Firebase", "Ubicación actualizada con éxito.")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firebase", "Error al actualizar la ubicación.", e)
+                }
+        } else {
+            Log.w("Firebase", "No hay un usuario autenticado.")
+        }
     }
 
     companion object {
