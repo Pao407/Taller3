@@ -22,7 +22,8 @@ import java.io.IOException
 import java.nio.charset.Charset
 
 class InteresFragment : Fragment() {
-    private lateinit var _binding: FragmentInteresBinding
+    private var _binding: FragmentInteresBinding? = null
+    private val binding get() = _binding!!
     private lateinit var puntosDeInteres: List<GeoPoint>
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
@@ -33,11 +34,11 @@ class InteresFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment with binding
         _binding = FragmentInteresBinding.inflate(inflater, container, false)
-        return _binding.root
+        return _binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        osmMap = _binding.osmMap
+        osmMap = binding.osmMap
         osmMap.setMultiTouchControls(true)
         Configuration.getInstance().userAgentValue = "com.example.taller_3_olarte_benitez_rodriguez"
 
@@ -117,5 +118,10 @@ class InteresFragment : Fragment() {
 
     companion object {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

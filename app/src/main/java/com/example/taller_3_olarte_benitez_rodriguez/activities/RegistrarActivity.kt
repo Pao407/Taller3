@@ -103,7 +103,7 @@ class RegistrarActivity : AppCompatActivity() {
 
     //funcion para subir la imagen a firebase storage y guardar los datos del usuario en firebase database
     private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri, email: String) {
-        val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
+        val storageRef = storage.reference.child("images/$uid")
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->

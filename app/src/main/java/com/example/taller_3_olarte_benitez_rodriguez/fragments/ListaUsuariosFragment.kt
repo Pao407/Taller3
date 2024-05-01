@@ -1,60 +1,86 @@
 package com.example.taller_3_olarte_benitez_rodriguez.fragments
 
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.taller_3_olarte_benitez_rodriguez.R
+import com.example.taller_3_olarte_benitez_rodriguez.adapters.UsuarioAdapter
+import com.example.taller_3_olarte_benitez_rodriguez.databinding.FragmentListaUsuariosBinding
+import com.example.taller_3_olarte_benitez_rodriguez.model.User
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.storage
+import java.io.File
+import java.util.UUID
+import kotlin.math.log
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ListaUsuariosFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ListaUsuariosFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentListaUsuariosBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista_usuarios, container, false)
+        _binding = FragmentListaUsuariosBinding.inflate(inflater, container, false)
+        return _binding!!.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListaUsuariosFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ListaUsuariosFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpListView()
+    }
+
+    private fun loadContacts(onDataLoaded: (Cursor) -> Unit){
+        val usuarios = mutableListOf<User>()
+        val cursor = MatrixCursor(arrayOf("_id", "name", "uri", "uid"))
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        val database = FirebaseDatabase.getInstance()
+        val usersRef = database.getReference("users")
+
+        usersRef.get().addOnSuccessListener {
+            val children = it.children
+            children.forEach { child ->
+                val user = child.getValue(User::class.java)
+                if (user != null && user.uid != currentUserId) {
+                    val localFile = File.createTempFile("img${UUID.randomUUID()}", "jpg")
+                    val storageRef = Firebase.storage.reference.child("images/${user.uid}.jpeg")
+
+                    storageRef.getFile(localFile).addOnSuccessListener {
+                        Log.d("ListaUsuariosFragment", "Imagen descargada")
+                        cursor.addRow(arrayOf(1, user.name, localFile.absolutePath.toString(), user.uid))
+                    }.addOnFailureListener {
+                        Log.e("ListaUsuariosFragment", "Error al descargar imagen de ${user.name}", it)
+                    }
                 }
             }
+            onDataLoaded(cursor)
+        }
+    }
+
+    private fun setUpListView() {
+        loadContacts { cursor ->
+            val adapter = UsuarioAdapter(requireContext(), cursor, 0)
+            binding.listViewUsuarios.adapter = adapter
+
+            binding.listViewUsuarios.setOnItemClickListener { _, _, position, _ ->
+                cursor.moveToPosition(position)
+                Toast.makeText(requireContext(), "Este es un contacto", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

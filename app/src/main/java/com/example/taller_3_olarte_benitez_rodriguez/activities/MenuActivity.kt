@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.example.taller_3_olarte_benitez_rodriguez.databinding.ActivityMenuBinding
 import com.example.taller_3_olarte_benitez_rodriguez.fragments.InteresFragment
+import com.example.taller_3_olarte_benitez_rodriguez.fragments.ListaUsuariosFragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -73,8 +74,8 @@ class MenuActivity : AppCompatActivity() {
                 return true
             }
             R.id.nav_usuarios -> {
-                //val usuariosFragment = NotificationsFragment()
-                //fragmentManager.beginTransaction().replace(R.id.fragmentContainerView, notificationsFragment).commit()
+                val usuariosFragment = ListaUsuariosFragment()
+                openFragment(usuariosFragment)
                 return true
             }
         }
