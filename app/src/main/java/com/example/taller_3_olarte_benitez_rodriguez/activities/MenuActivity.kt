@@ -1,5 +1,6 @@
 package com.example.taller_3_olarte_benitez_rodriguez.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -27,6 +28,9 @@ class MenuActivity : AppCompatActivity() {
 
         setUpFragment()
         openFragment(InteresFragment())
+        // Iniciar el servicio
+        val serviceIntent = Intent(this, UserAvailabilityService::class.java)
+        startService(serviceIntent)
     }
 
     private fun setUpFragment() {
