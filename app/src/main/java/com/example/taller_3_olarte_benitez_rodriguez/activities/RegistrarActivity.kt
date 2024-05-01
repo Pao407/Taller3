@@ -90,7 +90,7 @@ class RegistrarActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (imageUri != null) {
-                        uploadImageAndSaveUser(user?.uid, nombre, apellido, identificacion, latitud, longitud, imageUri!!)
+                        uploadImageAndSaveUser(user?.uid, nombre, apellido, identificacion, latitud, longitud, imageUri!!, email)
                         finish()
                     } else {
                         Toast.makeText(baseContext, "Por favor, selecciona una imagen.", Toast.LENGTH_SHORT).show()
@@ -102,7 +102,7 @@ class RegistrarActivity : AppCompatActivity() {
     }
 
     //funcion para subir la imagen a firebase storage y guardar los datos del usuario en firebase database
-    private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri) {
+    private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri, email: String) {
         val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
@@ -115,6 +115,7 @@ class RegistrarActivity : AppCompatActivity() {
                     user.latitud = latitud
                     user.longitud = longitud
                     user.image = downloadUri.toString()
+                    user.email = email
 
                     // Save user to Realtime Database under UID as key
                     myRef.child(uid!!).setValue(user)
