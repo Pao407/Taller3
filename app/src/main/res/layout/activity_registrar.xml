@@ -157,47 +157,69 @@
         android:hint="@string/identificacion"
         />
 
-    <TextView
-        android:id="@+id/textViewLatitud"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ingrese_su_latitud"
+        android:orientation="horizontal"
         android:layout_below="@id/editTextNumberIdentificacion"
-        android:layout_marginLeft="20dp"
-        android:textSize="16sp"
-        />
+        android:id="@+id/linear1">
+        <TextView
+            android:id="@+id/textViewLatitud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ingrese_su_latitud"
+            android:layout_below="@id/editTextNumberIdentificacion"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            />
+        <TextView
+            android:id="@+id/TextViewLatitudIngresada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@id/textViewLatitud"
+            android:text=""
+            />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/editTextNumberDecimalLatitud"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_below="@id/textViewLatitud"
-        android:hint="@string/latitud"
-        />
+        android:orientation="horizontal"
+        android:layout_below="@id/linear1"
+        android:id="@+id/linear2"
+        >
+        <TextView
+            android:id="@+id/textViewLongitud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingrese su longitud:"
 
-    <TextView
-        android:id="@+id/textViewLongitud"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            />
+        <TextView
+            android:id="@+id/TextViewLongitudIngresada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text=""
+            />
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/buttonLocalizacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ingrese su longitud:"
-        android:layout_below="@id/editTextNumberDecimalLatitud"
-        android:layout_marginLeft="20dp"
-        android:textSize="16sp"
-        />
-
-    <EditText
-        android:id="@+id/editTextNumberDecimalLongitud"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_below="@id/textViewLongitud"
-        android:hint="@string/longitud"
-        />
+        android:layout_weight="1"
+        android:text="Localizzacion"
+        android:layout_below="@id/linear2"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:id="@+id/buttonRegistrarse"
@@ -205,7 +227,7 @@
         android:layout_height="wrap_content"
         android:text="@string/registrarce"
         android:gravity="center"
-        android:layout_below="@id/editTextNumberDecimalLongitud"
+        android:layout_below="@id/buttonLocalizacion"
         android:layout_centerHorizontal="true"
         />
 
