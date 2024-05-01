@@ -1,12 +1,12 @@
 package com.example.taller_3_olarte_benitez_rodriguez.activities
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Location
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -16,21 +16,22 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.taller_3_olarte_benitez_rodriguez.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.util.UUID
 
 class RegistrarActivity : AppCompatActivity() {
 
@@ -46,6 +47,7 @@ class RegistrarActivity : AppCompatActivity() {
     }
     private val database = FirebaseDatabase.getInstance()
     private lateinit var myRef: DatabaseReference
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +64,22 @@ class RegistrarActivity : AppCompatActivity() {
             showMediaOptions()
         }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val localizacionButton = findViewById<Button>(R.id.buttonLocalizacion)
+        localizacionButton.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Solicita los permisos de ubicación si no están concedidos
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            } else {
+                // Si los permisos están concedidos, obtén la última ubicación conocida
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    // Actualiza los TextViews con la latitud y longitud
+                    findViewById<TextView>(R.id.TextViewLatitudIngresada).text = location?.latitude.toString()
+                    findViewById<TextView>(R.id.TextViewLongitudIngresada).text = location?.longitude.toString()
+                }
+            }
+        }
+
         val registrarButton = findViewById<Button>(R.id.buttonRegistrarse)
         registrarButton.setOnClickListener {
             val email = findViewById<EditText>(R.id.editTextTextEmailAddress2).text.toString()
@@ -69,8 +87,10 @@ class RegistrarActivity : AppCompatActivity() {
             val nombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
             val apellido = findViewById<EditText>(R.id.editTextApellido).text.toString()
             val identificacion = findViewById<EditText>(R.id.editTextNumberIdentificacion).text.toString()
-            val latitud = findViewById<EditText>(R.id.editTextNumberDecimalLatitud).text.toString()
-            val longitud = findViewById<EditText>(R.id.editTextNumberDecimalLongitud).text.toString()
+            val latitud = findViewById<TextView>(R.id.TextViewLatitudIngresada).text.toString()
+            val longitud = findViewById<TextView>(R.id.TextViewLongitudIngresada).text.toString()
+
+
 
             if (isEmailValid(email) && isPasswordValid(password) && isNameValid(nombre) && isLastNameValid(apellido) && isIdValid(identificacion) && isLatitudeValid(latitud) && isLongitudeValid(longitud)) {
                 registrar(nombre,apellido,email,password,identificacion,latitud,longitud)
@@ -100,7 +120,6 @@ class RegistrarActivity : AppCompatActivity() {
                 }
             }
     }
-
     //funcion para subir la imagen a firebase storage y guardar los datos del usuario en firebase database
     private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri, email: String) {
         val storageRef = storage.reference.child("images/$uid")
@@ -131,7 +150,6 @@ class RegistrarActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error al subir la imagen.", Toast.LENGTH_SHORT).show()
             }
     }
-
     //funcion para seleccionar imagen de la galeria o tomar una foto
     private fun showMediaOptions() {
         val options = arrayOf("Tomar foto", "Seleccionar de galería")
@@ -181,9 +199,18 @@ class RegistrarActivity : AppCompatActivity() {
                     Log.i("aris", "Permiso de cámara denegado.")
                 }
             }
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Si se concedió el permiso de ubicación, intenta obtener la última ubicación conocida
+                    val localizacionButton = findViewById<Button>(R.id.buttonLocalizacion)
+                    localizacionButton.performClick()
+                } else {
+                    // Si el permiso fue denegado, muestra un mensaje al usuario
+                    Toast.makeText(this, "Permiso de ubicación denegado.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -275,10 +302,12 @@ class RegistrarActivity : AppCompatActivity() {
     }
 
 
+
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val REQUEST_IMAGE_CAPTURE = 101
         const val PATH_USERS="users/"
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 200
     }
 
 
