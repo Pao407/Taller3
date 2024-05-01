@@ -38,6 +38,7 @@ class InteresFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         osmMap = _binding.osmMap
+        osmMap.setMultiTouchControls(true)
         Configuration.getInstance().userAgentValue = "com.example.taller_3_olarte_benitez_rodriguez"
 
         cargarPuntosDeInteresDesdeJSON()
