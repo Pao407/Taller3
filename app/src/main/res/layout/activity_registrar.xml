@@ -20,13 +20,14 @@
 
         />
 
-    <Button
-        android:id="@+id/buttonImgenPerfil"
+    <TextView
+        android:id="@+id/ImgenPerfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/seleccionar_imagen"
+        android:text="Ingrese su imagen de perfil"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/imageView"
+        android:textSize="16sp"
         />
 
     <ImageView
@@ -41,6 +42,8 @@
         app:layout_constraintVertical_bias="0.327"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/textViewRegistrase"
+        android:background="@drawable/border"
+        android:layout_marginTop="20dp"
         />
 
     <TextView
@@ -48,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ingrese_su_nombre"
-        android:layout_below="@id/buttonImgenPerfil"
+        android:layout_below="@id/ImgenPerfil"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:textSize="16sp"

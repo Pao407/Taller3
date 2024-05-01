@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -80,6 +81,8 @@ class RegistrarActivity : AppCompatActivity() {
         myRef = database.getReference(PATH_USERS)
 
     }
+
+    //funcion para registrar un usuario
     fun registrar(nombre: String, apellido: String,email: String,password: String, identificacion: String, latitud: String, longitud: String) {
         // Registrar el usuario con Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
@@ -97,6 +100,8 @@ class RegistrarActivity : AppCompatActivity() {
                 }
             }
     }
+
+    //funcion para subir la imagen a firebase storage y guardar los datos del usuario en firebase database
     private fun uploadImageAndSaveUser(uid: String?, nombre: String, apellido: String, identificacion: String, latitud: String, longitud: String, imageUri: Uri) {
         val storageRef = storage.reference.child("images/${UUID.randomUUID()}")
         storageRef.putFile(imageUri)
@@ -176,11 +181,19 @@ class RegistrarActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            saveImageToGallery(imageBitmap)
             ivImage.setImageBitmap(imageBitmap)
+            // Convertir el Bitmap a Uri para poder subirlo a Firebase
+            imageUri = getImageUriFromBitmap(imageBitmap)
         }
+    }
+
+    private fun getImageUriFromBitmap(bitmap: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "Title", null)
+        return Uri.parse(path)
     }
 //funcion para guardar la imagen en la galeria
     private fun saveImageToGallery(bitmap: Bitmap) {
