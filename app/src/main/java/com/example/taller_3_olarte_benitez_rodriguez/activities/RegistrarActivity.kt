@@ -83,7 +83,7 @@ class RegistrarActivity : AppCompatActivity() {
     }
 
     //funcion para registrar un usuario
-    fun registrar(nombre: String, apellido: String,email: String,password: String, identificacion: String, latitud: String, longitud: String) {
+    private fun registrar(nombre: String, apellido: String,email: String,password: String, identificacion: String, latitud: String, longitud: String) {
         // Registrar el usuario con Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
@@ -116,19 +116,20 @@ class RegistrarActivity : AppCompatActivity() {
                     user.longitud = longitud
                     user.image = downloadUri.toString()
 
-                    val key = myRef.push().key
-                    if (key != null) {
-                        myRef.child(key).setValue(user)
-                    }
+                    // Save user to Realtime Database under UID as key
+                    myRef.child(uid!!).setValue(user)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Usuario registrado exitosamente.", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Error al registrar el usuario.", Toast.LENGTH_SHORT).show()
+                        }
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Error al subir la imagen.", Toast.LENGTH_SHORT).show()
             }
     }
-
-
-
 
     //funcion para seleccionar imagen de la galeria o tomar una foto
     private fun showMediaOptions() {
@@ -153,6 +154,7 @@ class RegistrarActivity : AppCompatActivity() {
     private fun checkCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
+
     //funcion para solicitar permisos para acceder a la camara
     private fun requestCameraPermission() {
         ActivityCompat.requestPermissions(this,
@@ -160,12 +162,14 @@ class RegistrarActivity : AppCompatActivity() {
             CAMERA_PERMISSION_CODE
         )
     }
-//funcion para abrir la camara
+
+    //funcion para abrir la camara
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
     }
-//funcion para solicitar permisos para acceder a la camara
+
+    //funcion para solicitar permisos para acceder a la camara
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {

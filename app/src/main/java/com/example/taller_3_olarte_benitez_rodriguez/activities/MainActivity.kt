@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                                 // si la autenticacion es exitosa, pasar a la siguiente actividad
                                 Log.d(TAG, "signInWithEmail:success")
                                 val user = auth.currentUser
-                                val intent = Intent(this, IniciarActivity::class.java)
+                                val intent = Intent(this, MenuActivity::class.java)
                                 startActivity(intent)
                             } else {
                                 // si falla la autenticacion, mostrar un mensaje al usuario
