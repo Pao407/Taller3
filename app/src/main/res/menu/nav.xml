@@ -11,4 +11,8 @@
     <item android:title="@string/usuarios"
         android:id="@+id/nav_usuarios"
         android:icon="@drawable/baseline_groups_24" />
+
+    <item android:title="Cerrar Sesion"
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/baseline_label_important_outline_24" />
 </menu>

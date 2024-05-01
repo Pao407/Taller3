@@ -82,6 +82,13 @@ class MenuActivity : AppCompatActivity() {
                 openFragment(usuariosFragment, "ListaUsuariosFragment")
                 return true
             }
+            R.id.nav_logout -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+                return true
+            }
         }
         return false
     }

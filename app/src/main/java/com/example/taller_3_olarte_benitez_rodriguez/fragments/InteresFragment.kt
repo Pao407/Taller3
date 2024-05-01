@@ -161,16 +161,13 @@ class InteresFragment : Fragment() {
 
         if (userId != null) {
             val database = FirebaseDatabase.getInstance()
-            val myRef = database.getReference("users/$userId/location")
+            val myRef = database.getReference("users/$userId/latitud")
+            // Set latitud y longitud
+            myRef.setValue(ubicacion.latitude)
+            val myRef2 = database.getReference("users/$userId/longitud")
+            myRef2.setValue(ubicacion.longitude)
 
-            val locationMap = mapOf("latitude" to ubicacion.latitude, "longitude" to ubicacion.longitude)
-            myRef.setValue(locationMap)
-                .addOnSuccessListener {
-                    Log.d("Firebase", "Ubicación actualizada con éxito.")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firebase", "Error al actualizar la ubicación.", e)
-                }
+            Toast.makeText(requireContext(), "Ubicación actualizada", Toast.LENGTH_SHORT).show()
         } else {
             Log.w("Firebase", "No hay un usuario autenticado.")
         }

@@ -62,7 +62,7 @@ class ListaUsuariosFragment : Fragment() {
             children.forEach { child ->
                 val user = child.getValue(User::class.java)
                 if (user != null && user.uid != currentUserId && user.estado == "Disponible") {
-                    cursor.addRow(arrayOf(user.id, user.name, user.uid))
+                    cursor.addRow(arrayOf(1, user.name, user.uid))
                 }
             }
             onDataLoaded(cursor)

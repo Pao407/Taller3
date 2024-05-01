@@ -1,35 +1,33 @@
 package com.example.taller_3_olarte_benitez_rodriguez.activities
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.taller_3_olarte_benitez_rodriguez.R
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.taller_3_olarte_benitez_rodriguez.databinding.ActivityMapLocateBinding
-import com.example.taller_3_olarte_benitez_rodriguez.databinding.FragmentInteresBinding
-import com.example.taller_3_olarte_benitez_rodriguez.model.Ubicaciones
-import com.google.gson.Gson
+import com.example.taller_3_olarte_benitez_rodriguez.services.UserAvailabilityService
+import com.google.firebase.database.FirebaseDatabase
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import java.io.IOException
-import java.nio.charset.Charset
 
 class MapLocateActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapLocateBinding
-    private lateinit var puntosDeInteres: List<GeoPoint>
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
+    private var destino: Marker? = null
+    private var inicial: Marker? = null
+    private var isAdded = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapLocateBinding.inflate(layoutInflater)
@@ -39,7 +37,18 @@ class MapLocateActivity : AppCompatActivity() {
         osmMap.setMultiTouchControls(true)
         Configuration.getInstance().userAgentValue = "com.example.taller_3_olarte_benitez_rodriguez"
 
-        iniciarOverlayUbicacion()
+        iniciarOverlayUbicacion(intent.getStringExtra("uid").toString())
+        drawLine()
+        // Iniciar el
+    }
+
+    private fun drawLine() {
+        val polyline = org.osmdroid.views.overlay.Polyline()
+        val puntos = ArrayList<GeoPoint>()
+        puntos.add(destino!!.position)
+        puntos.add(inicial!!.position)
+        polyline.setPoints(puntos)
+        osmMap.overlays.add(polyline)
     }
 
     override fun onResume() {
@@ -47,14 +56,13 @@ class MapLocateActivity : AppCompatActivity() {
         osmMap.onResume()
         val mapController: IMapController = osmMap.controller
         mapController.setZoom(18.0)
-        mapController.setCenter(puntosDeInteres[0])
     }
 
     override fun onPause() {
         super.onPause()
         osmMap.onPause()
     }
-    private fun iniciarOverlayUbicacion() {
+    private fun iniciarOverlayUbicacion(uid: String) {
         mLocationOverlay = MyLocationNewOverlay(osmMap)
         osmMap.overlays.add(mLocationOverlay)
 
@@ -67,19 +75,39 @@ class MapLocateActivity : AppCompatActivity() {
         } else {
             mLocationOverlay.enableMyLocation()
             mLocationOverlay.enableFollowLocation()
-            mLocationOverlay.runOnFirstFix {
-                val location = mLocationOverlay.myLocation
-                location?.let {
-                    val myLocation = GeoPoint(it)
-                    agregarMarcadorUbicacionActual(myLocation)
-                }
+
+            obtenerUbicacion(uid) { ubicacion ->
+                marcadorInicial(mLocationOverlay.myLocation)
+                marcadorFinal(ubicacion)
             }
         }
     }
 
-    private fun agregarMarcadorUbicacionActual(ubicacion: GeoPoint) {
-        val marker = Marker(osmMap)
-        osmMap.overlays.add(marker)
+    private fun obtenerUbicacion(uid: String, onDataLoaded: (GeoPoint) -> Unit) {
+        // Obtain from firebase database
+        val databaseReference = FirebaseDatabase.getInstance().getReference("users/$uid/")
+
+        databaseReference.get().addOnSuccessListener {
+            val latitud = it.child("latitud").getValue(String::class.java)
+            val longitud = it.child("longitud").getValue(String::class.java)
+            val ubicacion = GeoPoint(latitud!!.toDouble(), longitud!!.toDouble())
+
+            onDataLoaded(ubicacion)
+        }
+    }
+
+    private fun marcadorInicial(ubicacion: GeoPoint) {
+        inicial?.let { osmMap.overlays.remove(it) }
+        inicial = Marker(osmMap)
+        inicial!!.position = ubicacion
+        osmMap.overlays.add(inicial)
+    }
+
+    private fun marcadorFinal(ubicacion: GeoPoint) {
+        destino?.let { osmMap.overlays.remove(it) }
+        destino = Marker(osmMap)
+        destino!!.position = ubicacion
+        osmMap.overlays.add(destino)
     }
 
     companion object {
