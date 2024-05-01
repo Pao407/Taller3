@@ -42,7 +42,7 @@ class ListaUsuariosFragment : Fragment() {
 
     private fun loadContacts(onDataLoaded: (Cursor) -> Unit){
         val usuarios = mutableListOf<User>()
-        val cursor = MatrixCursor(arrayOf("_id", "name", "uri", "uid"))
+        val cursor = MatrixCursor(arrayOf("_id", "name", "uid"))
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val database = FirebaseDatabase.getInstance()
         val usersRef = database.getReference("users")
@@ -52,15 +52,7 @@ class ListaUsuariosFragment : Fragment() {
             children.forEach { child ->
                 val user = child.getValue(User::class.java)
                 if (user != null && user.uid != currentUserId) {
-                    val localFile = File.createTempFile("img${UUID.randomUUID()}", "jpg")
-                    val storageRef = Firebase.storage.reference.child("images/${user.uid}")
-
-                    storageRef.getFile(localFile).addOnSuccessListener {
-                        Log.d("ListaUsuariosFragment", "Imagen descargada")
-                        cursor.addRow(arrayOf(1, user.name, localFile.absolutePath.toString(), user.uid))
-                    }.addOnFailureListener {
-                        Log.e("ListaUsuariosFragment", "Error al descargar imagen de ${user.name}", it)
-                    }
+                    cursor.addRow(arrayOf(1, user.name, user.uid))
                 }
             }
             onDataLoaded(cursor)
@@ -69,6 +61,7 @@ class ListaUsuariosFragment : Fragment() {
 
     private fun setUpListView() {
         loadContacts { cursor ->
+
             val adapter = UsuarioAdapter(requireContext(), cursor, 0)
             binding.listViewUsuarios.adapter = adapter
 

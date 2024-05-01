@@ -2,6 +2,7 @@ package com.example.taller_3_olarte_benitez_rodriguez.adapters
 
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,10 @@ import android.widget.CursorAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.taller_3_olarte_benitez_rodriguez.R
+import com.google.firebase.Firebase
+import com.google.firebase.storage.storage
+import java.io.File
+import java.util.UUID
 
 class UsuarioAdapter(context: Context?, c: Cursor?, flags: Int) : CursorAdapter(context, c, flags) {
 
@@ -19,12 +24,23 @@ class UsuarioAdapter(context: Context?, c: Cursor?, flags: Int) : CursorAdapter(
     }
 
     override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
-        val imgUsario = view?.findViewById<ImageView>(R.id.imagenUsuarioLista)
-        val nomUsuario = view?.findViewById<TextView>(R.id.nombreUsuarioLista)
+        loadImage(cursor?.getString(2) ?: "") { file ->
+            val imgUsario = view?.findViewById<ImageView>(R.id.imagenUsuarioLista)
+            val nomUsuario = view?.findViewById<TextView>(R.id.nombreUsuarioLista)
 
-        nomUsuario?.text = cursor?.getString(1)
-        val uriStr = cursor?.getString(2)
-        val uri = uriStr?.let { android.net.Uri.parse(it) }
-        imgUsario?.setImageURI(uri)
+            nomUsuario?.text = cursor?.getString(1)
+            val uri = Uri.fromFile(file)
+            imgUsario?.setImageURI(uri)
+        }
+    }
+
+    private fun loadImage(uid: String, onDataLoaded: (File) -> Unit) {
+        val localFile = File.createTempFile("img${UUID.randomUUID()}", "jpg")
+        val storageRef = Firebase.storage.reference.child("images/${uid}")
+
+        storageRef.getFile(localFile).addOnSuccessListener {
+            Log.d("ListaUsuariosFragment", "Imagen descargada")
+            onDataLoaded(localFile)
+        }
     }
 }
