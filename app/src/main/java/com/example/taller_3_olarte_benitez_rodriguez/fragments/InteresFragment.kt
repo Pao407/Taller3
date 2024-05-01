@@ -1,11 +1,17 @@
 package com.example.taller_3_olarte_benitez_rodriguez.fragments
 
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.taller_3_olarte_benitez_rodriguez.R
@@ -27,6 +33,7 @@ class InteresFragment : Fragment() {
     private lateinit var puntosDeInteres: List<GeoPoint>
     private lateinit var mLocationOverlay: MyLocationNewOverlay
     private lateinit var osmMap: MapView
+    private var marker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,15 +112,36 @@ class InteresFragment : Fragment() {
                 location?.let {
                     val myLocation = GeoPoint(it)
                     agregarMarcadorUbicacionActual(myLocation)
-
                 }
             }
+
+            val mlocationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val mlocationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    val myLocation = GeoPoint(location)
+                    Toast.makeText(requireContext(), "Location changed: $myLocation", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+                    // Implement your code here if needed
+                }
+
+                override fun onProviderEnabled(provider: String) {
+                    // Implement your code here if needed
+                }
+
+                override fun onProviderDisabled(provider: String) {
+                    // Log or show a message when the provider is disabled
+                    Log.d("LocationListener", "Provider disabled: $provider")
+                }
+            }
+
+            mlocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 10f, mlocationListener)
         }
     }
 
     private fun agregarMarcadorUbicacionActual(ubicacion: GeoPoint) {
-        val marker = Marker(osmMap)
-        osmMap.overlays.add(marker)
+        Log.i("map", "Se actuaizo")
     }
 
     companion object {

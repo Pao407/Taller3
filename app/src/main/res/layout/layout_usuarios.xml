@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    >
+    tools:context=".adapters.UsuarioAdapter">
 
     <ImageView
         android:id="@+id/imagenUsuarioLista"
@@ -22,11 +22,11 @@
         android:gravity="center"/>
 
     <Button
+        android:id="@+id/botonLocalizar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:text="@string/localizar"
-        />
+        android:text="@string/localizar"/>
 
 
 </LinearLayout>

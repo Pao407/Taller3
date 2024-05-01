@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -15,17 +12,24 @@ import com.example.taller_3_olarte_benitez_rodriguez.R
 import com.example.taller_3_olarte_benitez_rodriguez.databinding.ActivityMenuBinding
 import com.example.taller_3_olarte_benitez_rodriguez.fragments.InteresFragment
 import com.example.taller_3_olarte_benitez_rodriguez.fragments.ListaUsuariosFragment
-import com.google.firebase.Firebase
+import com.example.taller_3_olarte_benitez_rodriguez.services.UserAvailabilityService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class MenuActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMenuBinding
     private lateinit var fragmentManager: FragmentManager
+
+    companion object {
+        var menuActivity: MenuActivity? = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        menuActivity = this
 
         setUpFragment()
         openFragment(InteresFragment())
@@ -75,16 +79,16 @@ class MenuActivity : AppCompatActivity() {
             }
             R.id.nav_usuarios -> {
                 val usuariosFragment = ListaUsuariosFragment()
-                openFragment(usuariosFragment)
+                openFragment(usuariosFragment, "ListaUsuariosFragment")
                 return true
             }
         }
         return false
     }
 
-    private fun openFragment(fragment: Fragment) {
+    private fun openFragment(fragment: Fragment, tag: String = "") {
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragmentContainerView, fragment)
+        fragmentTransaction.replace(R.id.fragmentContainerView, fragment, tag)
         fragmentTransaction.commit()
     }
 }

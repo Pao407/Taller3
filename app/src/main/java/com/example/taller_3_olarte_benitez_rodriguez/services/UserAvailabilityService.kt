@@ -1,11 +1,18 @@
-package com.example.taller_3_olarte_benitez_rodriguez.activities
+package com.example.taller_3_olarte_benitez_rodriguez.services
 
 import android.app.Service
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.taller_3_olarte_benitez_rodriguez.activities.MainActivity
+import com.example.taller_3_olarte_benitez_rodriguez.activities.MenuActivity
+import com.example.taller_3_olarte_benitez_rodriguez.fragments.ListaUsuariosFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -46,13 +53,23 @@ class UserAvailabilityService : Service() {
     private fun handleUserAvailabilityChange(snapshot: DataSnapshot, userId: String?) {
         if (snapshot.key != userId) {
             val availability = snapshot.child("estado").getValue(String::class.java)
+            val mainHandler = Handler(Looper.getMainLooper())
+
             if (availability == "Disponible") {
                 val userName = snapshot.child("name").getValue(String::class.java) ?: "Desconocido"
-                val mainHandler = Handler(Looper.getMainLooper())
                 mainHandler.post {
                     Toast.makeText(applicationContext, "$userName está disponible", Toast.LENGTH_SHORT).show()
+
+                    val intent = Intent("com.example.taller_3_olarte_benitez_rodriguez.USER_AVAILABILITY_CHANGED")
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                }
+            } else {
+                mainHandler.post {
+                    val intent = Intent("com.example.taller_3_olarte_benitez_rodriguez.USER_AVAILABILITY_CHANGED")
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
                 }
             }
+
         }
     }
 }
