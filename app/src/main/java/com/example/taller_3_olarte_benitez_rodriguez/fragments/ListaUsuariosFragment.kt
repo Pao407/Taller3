@@ -53,7 +53,7 @@ class ListaUsuariosFragment : Fragment() {
                 val user = child.getValue(User::class.java)
                 if (user != null && user.uid != currentUserId) {
                     val localFile = File.createTempFile("img${UUID.randomUUID()}", "jpg")
-                    val storageRef = Firebase.storage.reference.child("images/${user.uid}.jpeg")
+                    val storageRef = Firebase.storage.reference.child("images/${user.uid}")
 
                     storageRef.getFile(localFile).addOnSuccessListener {
                         Log.d("ListaUsuariosFragment", "Imagen descargada")
